@@ -1,53 +1,46 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-const History = (props) => {
-  if (props.allClicks.length === 0) {
-    return (
-      <div>
-        the app is used by pressing the buttons
-      </div>
-    )
-  }
+const Button = (props) => {
+  return (
+    <button onClick={props.onClick}>
+      {props.text}
+    </button>
+  )
+}
+
+const Statistics = (props) => {
   return (
     <div>
-      button press history: {props.allClicks.join(' ')}
+      <p>good {props.good}</p>
+      <p>neutral {props.neutral}</p>
+      <p>bad {props.bad}</p>
     </div>
   )
 }
 
-const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
-
 const App = () => {
-  const [left, setLeft] = useState(0)
-  const [right, setRight] = useState(0)
-  const [allClicks, setAll] = useState([])
-  const [total, setTotal] = useState(0)
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
 
-
-  const handleLeftClick = () => {
-    setAll(allClicks.concat('L'))
-    const updatedLeft = left + 1
-    setLeft(updatedLeft)
-    setTotal(updatedLeft + right)
-  }
-
-  const handleRightClick = () => {
-    setAll(allClicks.concat('R'))
-    const updatedRight = right + 1
-    setRight(updatedRight)
-    setTotal(updatedRight + left)
-  }
+  const goodOne = () => setGood(good + 1)
+  const neutralOne = () => setNeutral(neutral + 1)
+  const badOne = () => setBad(bad + 1)
 
   return (
     <div>
-      <div>
-        {left}
-        <Button onClick={handleLeftClick} text='left' />
-        <Button onClick={handleRightClick} text='Right' />
-        {right}
-        <History allClicks={allClicks} />
-        {total}
-      </div>
+      <h1>give feedback</h1>
+
+      <Button onClick={goodOne} text='good' />
+      <Button onClick={neutralOne} text='neutral' />
+      <Button onClick={badOne} text='bad' />
+
+      <h1>statistics</h1>
+
+      <Statistics
+      good={good}
+      neutral={neutral}
+      bad={bad} />
     </div>
   )
 }
