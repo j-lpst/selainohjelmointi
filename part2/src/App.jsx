@@ -1,111 +1,58 @@
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import { useState } from 'react'
+import Note from './components/Note'
 
-const Filter = ({ value, onChange }) => {
-  return (
-    <div>
-      filter shown with: <input
-              value={value}
-              onChange={onChange}
-            />
-    </div>
-  )
-}
+const App = (props) => {
+  const [notes, setNotes] = useState([])
+  const [notes, setNotes] = useState(props.notes)
+  const [newNote, setNewNote] = useState('')
+  const [showAll, setShowAll] = useState(true)
 
-const Person = ({ name, number }) => {
-  return (
-    <p>{name} {number}</p>
-  )
-}
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/notes')
+      .then(response => {
+        console.log('promise fulfilled')
+        setNotes(response.data)
+      })
+  }, [])
+  console.log('render', notes.length, 'notes')
 
-const Persons = ({ persons, newFilter }) => {
-  return (
-    <>
-      {persons
-        .filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
-        .map((person) => (
-          <Person key={person.id} name={person.name} number={person.number} />
-        ))}
-    </>
-  )
-}
-
-const AddForm = ({ newName, newNumber, handlePersonChange, handleNumberChange, addPerson }) => {
-  return (
-    <form onSubmit={addPerson}>
-      <div>
-        name: <input
-                value={newName}
-                onChange={handlePersonChange}
-              />
-      </div>
-
-      <div>
-        number: <input
-                  value={newNumber}
-                  onChange={handleNumberChange}
-                />
-      </div>
-
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  )
-}
-
-const App = () => {
-  const [persons, setPersons] = useState([ { name: 'Arto Hellas', number: '040-1231244' } ])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [newFilter, setNewFilter] = useState('')
-
-  const handleFilterChange = (event) => {
-    console.log(event.target.value)
-    setNewFilter(event.target.value)
-  }
-
-  const addPerson = (event) => {
+  const addNote = (event) => {
     event.preventDefault()
-    console.log('button clicked', event.target)
-    const personObject = {
-      name: newName,
-      id: String(persons.length + 1),
-      number: newNumber
+    const noteObject = {
+      content: newNote,
+      important: Math.random() > 0.5
     }
-
-    if (!persons.some((p) => p.name === newName)) {
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
-    } else {console.log(`${newName} is already added to phonebook`)}
+    setNotes(notes.concat(noteObject))
+    setNewNote('')
   }
 
-  const handlePersonChange = (event) => {
-    console.log(event.target.value)
-    setNewName(event.target.value)
+  const handleNoteChange = (event) => {
+    setNewNote(event.target.value)
   }
-  const handleNumberChange = (event) => {
-    console.log(event.target.value)
-    setNewNumber(event.target.value)
-  }
+
+  const notesToShow = showAll
+    ? notes
+    : notes.filter(note => note.important)
 
   return (
     <div>
-      <h1>Phonebook</h1>
-
-      <Filter value={newFilter} onChange={handleFilterChange} />
-
-      <h2>Add a new</h2>
-      <AddForm
-        newName={newName}
-        newNumber={newNumber}
-        handlePersonChange={handlePersonChange}
-        handleNumberChange={handleNumberChange}
-        addPerson={addPerson}
-      />
-
-      <h2>Numbers</h2>
-      <Persons persons={persons} newFilter={newFilter} />
+      <h1>Notes</h1>
+      <div>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? 'important' : 'all'}
+        </button>
+      </div>
+      <ul>
+        {notesToShow.map(note => <Note key={note.id} note={note} />)}
+      </ul>
+      <form onSubmit={addNote}>
+        <input value={newNote} onChange={handleNoteChange} />
+        <button type="submit">save</button>
+      </form>
     </div>
   )
 }
