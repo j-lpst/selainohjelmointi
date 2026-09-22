@@ -84,6 +84,11 @@ const App = () => {
       id: String(persons.length + 1),
       number: newNumber
     }
+    axios
+      .post('http://localhost:3001/persons', personObject)
+      .then(response => {
+        console.log(response)
+      })
 
     if (!persons.some((p) => p.name === newName)) {
       setPersons(persons.concat(personObject))
