@@ -85,6 +85,34 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target)
+
+    const exists = persons.find(p => p.name === newName)
+    if (exists) {
+      if (!window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        return
+      }
+
+      const updatedPersonObject = {
+        name: exists.name,
+        id: exists.id,
+        number: newNumber
+      }
+      personService
+        .update(exists.id, updatedPersonObject)
+        .then(response => {
+          const updatedList = persons.map(p => {
+            if (p.id === response.data.id) {
+              return response.data
+            }
+            return p
+          })
+          setPersons(updatedList)
+          setNewName('')
+          setNewNumber('')
+        })
+      return
+    }
+
     const personObject = {
       name: newName,
       id: String(persons.length + 1),
@@ -96,18 +124,12 @@ const App = () => {
       .then(response => {
         setPersons(persons.concat(response.data))
         setNewName('')
+        setNewNumber('')
       })
-
-    if (!persons.some((p) => p.name === newName)) {
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
-    } else {console.log(`${newName} is already added to phonebook`)}
   }
 
   const deletePerson = (id) => {
     const person = persons.find(p => p.id === id)
-
 
     console.log(`deleting person ${person.name} (${id})`)
 
