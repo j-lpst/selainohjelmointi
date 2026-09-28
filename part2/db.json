@@ -29,6 +29,11 @@
       "name": "Tero Äly",
       "id": "4onTe16U9B8",
       "number": "+123456789"
+    },
+    {
+      "name": "a",
+      "id": "1qUsZuCpf5o",
+      "number": "1"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
