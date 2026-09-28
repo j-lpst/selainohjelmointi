@@ -13,19 +13,27 @@ const Filter = ({ value, onChange }) => {
   )
 }
 
-const Person = ({ name, number }) => {
+const Person = ({ name, number, deletePerson }) => {
   return (
-    <p>{name} {number}</p>
+    <p>
+      {name} {number}
+      <button onClick={deletePerson}>delete</button>
+    </p>
   )
 }
 
-const Persons = ({ persons, newFilter }) => {
+const Persons = ({ persons, newFilter, deletePerson}) => {
   return (
     <>
       {persons
         .filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
         .map((person) => (
-          <Person key={person.id} name={person.name} number={person.number} />
+          <Person
+            key={person.id}
+            name={person.name}
+            number={person.number}
+            deletePerson={() => deletePerson(person.id)}
+          />
         ))}
     </>
   )
@@ -97,6 +105,21 @@ const App = () => {
     } else {console.log(`${newName} is already added to phonebook`)}
   }
 
+  const deletePerson = (id) => {
+    const person = persons.find(p => p.id === id)
+
+
+    console.log(`deleting person ${person.name} (${id})`)
+
+    if (window.confirm(`Haluatko varmasti poistaa henkilön "${person.name}"?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+        })
+    }
+  }
+
   const handlePersonChange = (event) => {
     console.log(event.target.value)
     setNewName(event.target.value)
@@ -122,7 +145,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={persons} newFilter={newFilter} />
+      <Persons persons={persons} newFilter={newFilter} deletePerson={deletePerson}/>
     </div>
   )
 }
