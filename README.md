@@ -1,5 +1,7 @@
 # Selainohjelmointi tehtävät
 
+fullstackopen.com tehtävät.
+
 Tehtävät on tägätty gitiin.
 
 Tarkastele jotain tehtävää (esim. 2.17*):
