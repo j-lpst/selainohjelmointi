@@ -13,6 +13,8 @@ const Filter = ({ value, onChange }) => {
 }
 
 const Country = ({matches_len, name, capital, area, languages, flag}) => {
+  const [expanded, setExpanded] = useState(false)
+
   if (matches_len === 1) {
     return (
       <div>
@@ -31,7 +33,20 @@ const Country = ({matches_len, name, capital, area, languages, flag}) => {
   }
   return (
     <div>
-      <p>{name}</p>
+      <p>{name} <button onClick={() => setExpanded(!expanded)}>Show</button></p>
+      {expanded && (
+        <div>
+          <p>Capital {capital}</p>
+          <p>Area {area}</p>
+          <h2>Languages</h2>
+          <ul>
+          {Object.entries(languages).map(([code, lang]) => (
+             <li key={code}>{lang}</li>
+           ))}
+          </ul>
+          <img src={flag} width={300}/>
+        </div>
+      )}
     </div>
   )
 }
